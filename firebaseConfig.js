@@ -1,16 +1,21 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBS1z0lOKegocsVi9ESkCLv07HNEui0jkc",
   authDomain: "ecoappfirebase-f71da.firebaseapp.com",
   projectId: "ecoappfirebase-f71da",
-  storageBucket: "ecoappfirebase-f71da.appspot.com",
+  storageBucket: "ecoappfirebase-f71da.firebasestorage.app",
   messagingSenderId: "712952443362",
-  appId: "1:712952443362:web:bd724eade0e2907a2149bb",
+  appId: "1:712952443362:web:bd724eade0e2907a2149bb"
 };
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const app = getApps().length === 0
+  ? initializeApp(firebaseConfig)
+  : getApp();
 
+export const auth = getAuth(app);
 export const db = getFirestore(app);
+
 

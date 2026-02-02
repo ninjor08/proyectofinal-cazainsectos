@@ -1,41 +1,36 @@
-import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
-import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { db } from "../../firebaseConfig";
+import { View, Text, Pressable, Alert } from "react-native";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebaseConfig";
 
-export default function HighScoreScreen() {
-  const [best, setBest] = useState<number | null>(null);
-
-  useEffect(() => {
-    const loadBest = async () => {
-      try {
-        const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(1));
-        const snap = await getDocs(q);
-
-        if (!snap.empty) {
-          setBest(snap.docs[0].data().score);
-        } else {
-          setBest(0);
-        }
-      } catch (e) {
-        setBest(0);
-      }
-    };
-
-    loadBest();
-  }, []);
+export default function ExploreScreen() {
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (e) {
+      Alert.alert("Error", "No se pudo cerrar sesión.");
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>🏆 Puntaje más alto</Text>
-      <Text style={styles.score}>{best === null ? "Cargando..." : best}</Text>
+    <View style={{ flex: 1, padding: 20, justifyContent: "center", gap: 12 }}>
+      <Text style={{ fontSize: 22, fontWeight: "700" }}>Mi cuenta</Text>
+      <Text style={{ color: "#444" }}>
+        Sesión: {auth.currentUser?.email ?? "Sin correo"}
+      </Text>
+
+      <Pressable
+        onPress={handleLogout}
+        style={{
+          padding: 12,
+          borderRadius: 10,
+          alignItems: "center",
+          backgroundColor: "#111",
+          marginTop: 10,
+        }}
+      >
+        <Text style={{ color: "white", fontWeight: "600" }}>Cerrar sesión</Text>
+      </Pressable>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 15 },
-  score: { fontSize: 40, fontWeight: "bold" },
-});
 
